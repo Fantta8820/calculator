@@ -10,20 +10,34 @@ const Button = ({ input, className }) => {
     if (list.length === 0) {
       // Verify if the first element is a number
       if (number.includes(Number(input))) {
-        list.push(Number(input));        
+        list.push(Number(input));
       } else {
         console.log("Inválido");
       }
-    }else{
-      // See if the next element and the past element is a number
-      if(number.includes(Number(input)) && Number(list[list.length - 1])){
-        list[list.length - 1] = Number(String(list[list.length - 1]) + String(input));
-      }else{
-        // Verify if the first element is a number
-        if(number.includes(Number(input))){
+    } else {
+      if (input === "DEL") {
+        list.pop();
+      } else if(input === "RESETAR"){
+        list.splice(0, list.length)
+      } else {
+        // See if the actual element is a number and the past element is a zero
+        if (number.includes(Number(input)) && list[list.length - 1] === 0) {
+          list.pop();
           list.push(Number(input));
-        }else{
-          list.push(input);
+        } else {
+          // See if the actual element and the past element is a number
+          if (number.includes(Number(input)) && Number(list[list.length - 1])) {
+            list[list.length - 1] = Number(
+              String(list[list.length - 1]) + String(input)
+            );
+          } else {
+            // Verify if the first element is a number
+            if (number.includes(Number(input))) {
+              list.push(Number(input));
+            } else {
+              list.push(input);
+            }
+          }
         }
       }
     }
