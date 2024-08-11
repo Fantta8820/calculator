@@ -1,11 +1,13 @@
 let number = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-let operations = ["+", "-", "*", "/"];
-let actions = ["DEL", "RESETAR", "="];
+let operator = ["+", "-", "*", "/"];
+let action = ["DEL", "RESETAR", "="];
 
 let list = [];
 
 const Button = ({ input, className }) => {
   function handleClick() {
+    // Start of the part where take all the info
+
     // Verify if the list is empty
     if (list.length === 0) {
       // Verify if the first element is a number
@@ -17,8 +19,8 @@ const Button = ({ input, className }) => {
     } else {
       if (input === "DEL") {
         list.pop();
-      } else if(input === "RESETAR"){
-        list.splice(0, list.length)
+      } else if (input === "RESETAR") {
+        list.splice(0, list.length);
       } else {
         // See if the actual element is a number and the past element is a zero
         if (number.includes(Number(input)) && list[list.length - 1] === 0) {
@@ -35,13 +37,76 @@ const Button = ({ input, className }) => {
             if (number.includes(Number(input))) {
               list.push(Number(input));
             } else {
-              list.push(input);
+              // Verify if the last element is a operator
+              if (!Number(list[list.length - 1])) {
+                list.pop();
+                list.push(input);
+              } else {
+                list.push(input);
+              }
             }
           }
         }
       }
     }
+
+    // End of the part where take all the info
+
+    // Start of the part where we make the calculations
+
+    // Take the position of every element that is a * or a /
+    let indexM = list
+      .map((element, index) => {
+        if (typeof element === "string") {
+          return element.includes("*") ? index : null;
+        }
+      })
+      .filter((item) => item !== null && item !== undefined);
+
+    let indexD = list
+      .map((element, index) => {
+        if (typeof element === "string") {
+          return element.includes("/") ? index : null;
+        }
+      })
+      .filter((item) => item !== null && item !== undefined);
+
+    let indexP = list
+      .map((element, index) => {
+        if (typeof element === "string") {
+          return element.includes("+") ? index : null;
+        }
+      })
+      .filter((item) => item !== null && item !== undefined);
+
+    let indexS = list
+      .map((element, index) => {
+        if (typeof element === "string") {
+          return element.includes("-") ? index : null;
+        }
+      })
+      .filter((item) => item !== null && item !== undefined);
+
+    // Make the calculations with *
+
+    if (!number.includes(Number(input))) {
+      indexM.forEach((element) => {
+        let value = list[element - 1] * list[element + 1];
+        if (!isNaN(value) && list[element + 1] !== "string") {
+          list[element - 1] = value;
+          if (element === 1) {
+            list.splice(element, element + 1);
+            console.log(value);
+          } else {
+            list.splice(element, element - 1);
+            console.log(value);
+          }
+        }
+      });
+    }
+
     console.log(list);
+    console.log(indexM);
   }
 
   return (
@@ -152,7 +217,7 @@ export default function App() {
               }
             />
             <Button
-              input="X"
+              input="*"
               className={
                 "btn bg-white w-32 h-16 text-3xl font-bold text-black shadow-xl hover:bg-slate-300"
               }
